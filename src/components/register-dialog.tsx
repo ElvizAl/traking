@@ -5,30 +5,32 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+import { signUpEmailAction } from "@/actions/signup-action"
 
-interface RegisterDialogProps {
-  onRegister: (username: string) => void
-}
-
-export function RegisterDialog({ onRegister }: RegisterDialogProps) {
+export function RegisterDialog() {
   const [isOpen, setIsOpen] = useState(false)
-  const [registerForm, setRegisterForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  })
+  const [isPending, setIsPending] = useState(false);
+  const router = useRouter();
 
-  const handleRegister = () => {
-    if (
-      registerForm.username &&
-      registerForm.email &&
-      registerForm.password &&
-      registerForm.password === registerForm.confirmPassword
-    ) {
-      onRegister(registerForm.username)
-      setIsOpen(false)
-      setRegisterForm({ username: "", email: "", password: "", confirmPassword: "" })
+  async function handleSubmit(evt: React.FormEvent<HTMLFormElement>) {
+
+    evt.preventDefault();
+
+    setIsPending(true);
+
+    const formData = new FormData(evt.currentTarget);
+
+    const { error } = await signUpEmailAction(formData);
+
+    if (error) {
+      toast.error(error);
+      setIsPending(false);
+    } else {
+      toast.success("pendaftaran Berhasil Silahkan login");
+      router.push("/");
+      window.location.reload();
     }
   }
 
@@ -45,76 +47,51 @@ export function RegisterDialog({ onRegister }: RegisterDialogProps) {
             Daftar Akun Baru ✨
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="reg-username" className="text-slate-300">
-              Username
-            </Label>
-            <Input
-              id="reg-username"
-              value={registerForm.username}
-              onChange={(e) => setRegisterForm((prev) => ({ ...prev, username: e.target.value }))}
-              className="bg-slate-800 border-slate-700 text-white"
-              placeholder="Pilih username..."
-            />
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name" className="text-slate-300 mb-2">
+                Nama Lengkap
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                name="name"
+                className="bg-slate-800 border-slate-700 text-white"
+                placeholder="Pilih username..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-slate-300 mb-2">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                className="bg-slate-800 border-slate-700 text-white"
+                placeholder="Masukkan email..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="password" className="text-slate-300 mb-2">
+                Password
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                name="password"
+                className="bg-slate-800 border-slate-700 text-white"
+                placeholder="Buat password..."
+              />
+            </div>
+            <Button
+              className="w-full bg-gradient-to-r cursor-pointer from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600" disabled={isPending}
+            >
+              Daftar ✨
+            </Button>
           </div>
-          <div>
-            <Label htmlFor="reg-email" className="text-slate-300">
-              Email
-            </Label>
-            <Input
-              id="reg-email"
-              type="email"
-              value={registerForm.email}
-              onChange={(e) => setRegisterForm((prev) => ({ ...prev, email: e.target.value }))}
-              className="bg-slate-800 border-slate-700 text-white"
-              placeholder="Masukkan email..."
-            />
-          </div>
-          <div>
-            <Label htmlFor="reg-password" className="text-slate-300">
-              Password
-            </Label>
-            <Input
-              id="reg-password"
-              type="password"
-              value={registerForm.password}
-              onChange={(e) => setRegisterForm((prev) => ({ ...prev, password: e.target.value }))}
-              className="bg-slate-800 border-slate-700 text-white"
-              placeholder="Buat password..."
-            />
-          </div>
-          <div>
-            <Label htmlFor="reg-confirm-password" className="text-slate-300">
-              Konfirmasi Password
-            </Label>
-            <Input
-              id="reg-confirm-password"
-              type="password"
-              value={registerForm.confirmPassword}
-              onChange={(e) => setRegisterForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-              className="bg-slate-800 border-slate-700 text-white"
-              placeholder="Ulangi password..."
-            />
-          </div>
-          {registerForm.password &&
-            registerForm.confirmPassword &&
-            registerForm.password !== registerForm.confirmPassword && (
-              <p className="text-red-400 text-xs">Password tidak sama!</p>
-            )}
-          <Button
-            onClick={handleRegister}
-            disabled={
-              !registerForm.username ||
-              !registerForm.email ||
-              !registerForm.password ||
-              registerForm.password !== registerForm.confirmPassword
-            }
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-          >
-            Daftar ✨
-          </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   )
