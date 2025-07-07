@@ -3,12 +3,7 @@
 import { BookOpen, Play } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
-interface StatsCardsProps {
-  animeCount: number
-  mangaCount: number
-}
-
-export function StatsCards({ animeCount, mangaCount }: StatsCardsProps) {
+export function StatsCards() {
   return (
     <div className="grid grid-cols-2 gap-3 mb-6">
       <Card className="bg-gradient-to-br from-pink-500/10 to-violet-500/10 border-pink-500/20">
@@ -17,7 +12,7 @@ export function StatsCards({ animeCount, mangaCount }: StatsCardsProps) {
             <Play className="w-4 h-4 text-pink-400" />
             <div>
               <p className="text-xs text-slate-400">Anime</p>
-              <p className="text-lg font-bold text-white">{animeCount}</p>
+              <p className="text-lg font-bold text-white">5</p>
             </div>
           </div>
         </CardContent>
@@ -29,7 +24,7 @@ export function StatsCards({ animeCount, mangaCount }: StatsCardsProps) {
             <BookOpen className="w-4 h-4 text-blue-400" />
             <div>
               <p className="text-xs text-slate-400">Manga</p>
-              <p className="text-lg font-bold text-white">{mangaCount}</p>
+              <p className="text-lg font-bold text-white">5</p>
             </div>
           </div>
         </CardContent>

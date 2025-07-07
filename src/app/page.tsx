@@ -27,8 +27,6 @@ export default async function AnimeTracker() {
           </h1>
           <p className="text-slate-400 text-sm">Catat progress anime & manga kamu</p>
         </div>
-
-        {/* Login/Register or User Profile */}
         {!session ? (
           <div className="flex gap-2 justify-center mb-6">
             <LoginDialog />
@@ -37,6 +35,8 @@ export default async function AnimeTracker() {
         ) : (
           <UserProfile />
         )}
+        <StatsCards />
+        <SearchBar />
       </div>
     </div>
   )

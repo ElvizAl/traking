@@ -3,6 +3,8 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -12,6 +14,38 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Entry {
+  id            String   @id @default(cuid())
+  title         String
+  category      Category
+  progress      Int      @default(1)
+  status        Status   @default(ONGOING)
+  genre         String?
+  totalEpisodes Int?     @map("total_episodes")
+  coverColor    String   @map("cover_color")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([category])
+  @@index([status])
+  @@map("entries")
+}
+
+enum Category {
+  ANIME @map("anime")
+  MANGA @map("manga")
+}
+
+enum Status {
+  ONGOING   @map("ongoing")
+  COMPLETED @map("completed")
 }
 
 model User {
@@ -24,6 +58,7 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
+  entries       Entry[]
 
   @@unique([email])
   @@map("users")
